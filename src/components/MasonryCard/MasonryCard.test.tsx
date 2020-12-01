@@ -4,7 +4,7 @@ import { MasonryCard } from "./MasonryCard";
 import { ASSET_TYPES } from "../../features/library/assetsSlice";
 
 test("renders masonry card", () => {
-  const { container, getByTestId } = render(
+  const { container, getByTestId, queryByTestId } = render(
     <MasonryCard
       index={0}
       data={{
@@ -24,5 +24,5 @@ test("renders masonry card", () => {
   expect(container).toBeTruthy();
   expect(container).toHaveTextContent("fileName");
   expect(getByTestId("card-image")).toHaveAttribute("src", "thumbnailUrl");
-  expect(getByTestId("card-video")).toBeFalsy();
+  expect(queryByTestId("card-video")).toBeFalsy();
 });

@@ -49,7 +49,7 @@ export const MasonryCard: React.ComponentType<RenderComponentProps<Asset>> = ({
   return (
     <MasonryCardStyled {...props}>
       <MasonryCardImageStyled
-        date-testid="card-image"
+        data-testid="card-image"
         hidden={showVideo}
         ref={ref}
         src={thumbnail_url}
