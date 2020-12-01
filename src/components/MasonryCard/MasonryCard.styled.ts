@@ -4,6 +4,11 @@ export const MasonryCardStyled = styled.div`
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   cursor: pointer;
+  transition: transform .2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 export const MasonryCardImageStyled = styled.img`
