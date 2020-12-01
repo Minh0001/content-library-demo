@@ -4,9 +4,9 @@ import { AppThunk, RootState } from "../../app/store";
 const DEFAULT_PAGE_SIZE = 10;
 
 export enum ASSET_TYPES {
-  PRODUCT,
-  VIDEO,
-  IMAGE,
+  PRODUCT = "PRODUCT",
+  VIDEO = "VIDEO",
+  IMAGE = "IMAGE",
 }
 
 export interface Asset {
@@ -23,7 +23,6 @@ export interface Asset {
 interface AssetsState {
   isLoading: boolean;
   error: string;
-  page: number;
   size: number;
   total: number;
   data: Asset[];
@@ -32,7 +31,6 @@ interface AssetsState {
 const initialState: AssetsState = {
   isLoading: false,
   error: "",
-  page: 0,
   total: 0,
   size: DEFAULT_PAGE_SIZE,
   data: [],
@@ -42,16 +40,17 @@ export const assetsSlice = createSlice({
   name: "assets",
   initialState,
   reducers: {
-    fetchAssetsStart: (state) => {
+    fetchAssetsStart: (state, action: PayloadAction<boolean>) => {
       state.isLoading = true;
       state.error = "";
+      state.data = action.payload ? state.data : [];
     },
     fetchAssetsSuccess: (
       state,
-      action: PayloadAction<{ page: number; data: Asset[] }>
+      action: PayloadAction<{ data: Asset[]; total: number }>
     ) => {
       state.isLoading = false;
-      state.page = action.payload.page;
+      state.total = action.payload.total;
       state.data.push(...action.payload.data);
     },
     fetchAssetsFailure: (state, action: PayloadAction<string>) => {
@@ -67,15 +66,27 @@ export const {
   fetchAssetsFailure,
 } = assetsSlice.actions;
 
-export const fetchAssets = (): AppThunk => (dispatch, getState) => {
+export const fetchAssets = (payload: {
+  start: number;
+  end: number;
+  query?: string;
+  filter?: string;
+  refresh?: boolean;
+}): AppThunk => (dispatch, getState) => {
+  const { start, end, filter, query, refresh = false } = payload;
   const state = getState();
   if (!state.assets.isLoading) {
-    const page = state.assets.page + 1;
-    dispatch(fetchAssetsStart());
-    return fetch(`http://localhost:3001/assets?_page=${page}`)
-      .then((res) => res.json())
-      .then((json) => {
-        dispatch(fetchAssetsSuccess({ page, data: json }));
+    dispatch(fetchAssetsStart(refresh));
+    return fetch(
+      `http://localhost:3001/assets?_start=${start}&_end=${end}${
+        filter && "&" + filter
+      }${query ? `&q=${query}` : ""}`
+    )
+      .then((res) => {
+        const total = +(res.headers.get("X-Total-Count") || 0);
+        res.json().then((json) => {
+          dispatch(fetchAssetsSuccess({ data: json, total }));
+        });
       })
       .catch(() => {
         dispatch(fetchAssetsFailure("Something went wrong!"));
