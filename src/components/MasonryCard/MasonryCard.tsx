@@ -12,8 +12,7 @@ const DEMO_VIDEO =
   "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
 
 export const MasonryCard: React.ComponentType<RenderComponentProps<Asset>> = ({
-  index,
-  data: { id, asset_type, file_name, thumbnail_url },
+  data: { asset_type, file_name, thumbnail_url },
   width,
 }) => {
   const ref = useRef<HTMLImageElement>(null);
@@ -50,6 +49,7 @@ export const MasonryCard: React.ComponentType<RenderComponentProps<Asset>> = ({
   return (
     <MasonryCardStyled {...props}>
       <MasonryCardImageStyled
+        date-testid="card-image"
         hidden={showVideo}
         ref={ref}
         src={thumbnail_url}
@@ -58,7 +58,7 @@ export const MasonryCard: React.ComponentType<RenderComponentProps<Asset>> = ({
         onLoad={handleImageOnLoad}
       />
       {showVideo && (
-        <ReactPlayer width={width} height={height} playing url={DEMO_VIDEO} />
+        <ReactPlayer data-testid="card-video" width={width} height={height} playing url={DEMO_VIDEO} />
       )}
       <MasonryCardDescStyled width={width}>{file_name}</MasonryCardDescStyled>
     </MasonryCardStyled>
