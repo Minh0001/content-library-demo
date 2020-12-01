@@ -58,7 +58,13 @@ export const MasonryCard: React.ComponentType<RenderComponentProps<Asset>> = ({
         onLoad={handleImageOnLoad}
       />
       {showVideo && (
-        <ReactPlayer data-testid="card-video" width={width} height={height} playing url={DEMO_VIDEO} />
+        <ReactPlayer
+          data-testid="card-video"
+          width={width}
+          height={height}
+          playing
+          url={DEMO_VIDEO}
+        />
       )}
       <MasonryCardDescStyled width={width}>{file_name}</MasonryCardDescStyled>
     </MasonryCardStyled>
